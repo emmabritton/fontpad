@@ -125,6 +125,22 @@ impl Scene<SceneResult, SceneName> for PadScene {
                     self.paste()
                 }
             }
+            KeyCode::ArrowUp => {
+                self.pad_view.move_up();
+                self.preview.update(&self.pad_view);
+            }
+            KeyCode::ArrowDown => {
+                self.pad_view.move_down();
+                self.preview.update(&self.pad_view);
+            }
+            KeyCode::ArrowLeft => {
+                self.pad_view.move_left();
+                self.preview.update(&self.pad_view);
+            }
+            KeyCode::ArrowRight => {
+                self.pad_view.move_right();
+                self.preview.update(&self.pad_view);
+            }
             _ => {}
         }
     }

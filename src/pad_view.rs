@@ -160,6 +160,42 @@ impl PadView {
             Rect::new_with_size((0, 0), square_size * self.size.0, square_size * self.size.1);
         drawing_area.move_center_to(self.bounds.center())
     }
+
+    pub fn move_up(&mut self) {
+        let mut removed = vec![];
+        for _ in 0..self.size.0 {
+            removed.push(self.dots.remove(0));
+        }
+        self.dots.extend_from_slice(&removed);
+    }
+
+    pub fn move_down(&mut self) {
+        let mut removed = vec![];
+        for _ in 0..self.size.0 {
+            removed.push(self.dots.remove(self.dots.len() - 1));
+        }
+        for value in removed.into_iter() {
+            self.dots.insert(0, value);
+        }
+    }
+
+    pub fn move_left(&mut self) {
+        for i in 0..self.size.1 {
+            let take = i * self.size.0;
+            let insert = take + 3;
+            let value = self.dots.remove(take);
+            self.dots.insert(insert, value);
+        }
+    }
+
+    pub fn move_right(&mut self) {
+        for i in 0..self.size.1 {
+            let insert = i * self.size.0;
+            let take = insert + 3;
+            let value = self.dots.remove(take);
+            self.dots.insert(insert, value);
+        }
+    }
 }
 
 impl UiElement for PadView {

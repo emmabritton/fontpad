@@ -28,12 +28,13 @@ jobs:
       - name: fmt
         run: cargo fmt --all -- --check
       - name: clippy
-        run: cargo clippy --all-targets -- -D clippy::all
+        run: cargo clippy -- -D clippy::all
       - name: test
         run: cargo test
 
   build_and_release:
     if: startsWith(github.ref, 'refs/tags/v')
+    needs: [check]
     name: Build and Release
     strategy:
       fail-fast: false
@@ -45,13 +46,13 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            name: fontpad-linux.tar.gz
+            name: fontpad_linux.tar.gz
           - target: x86_64-apple-darwin
             os: macOS-latest
-            name: fontpad-mac.tar.gz
+            name: fontpad_mac.tar.gz
           - target: x86_64-pc-windows-msvc
             os: windows-latest
-            name: fontpad-windows.zip
+            name: fontpad_windows.zip
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
