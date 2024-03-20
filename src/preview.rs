@@ -1,10 +1,10 @@
-use pixels_graphics_lib::buffer_graphics_lib::Graphics;
-use pixels_graphics_lib::buffer_graphics_lib::scaling::Scaling;
-use pixels_graphics_lib::MouseData;
-use pixels_graphics_lib::prelude::{AppPrefs, BLACK, Coord, Rect, Shape, Timing, WHITE};
-use pixels_graphics_lib::ui::{ElementState, UiElement};
 use crate::pad_view::PadView;
 use crate::Settings;
+use pixels_graphics_lib::buffer_graphics_lib::scaling::Scaling;
+use pixels_graphics_lib::buffer_graphics_lib::Graphics;
+use pixels_graphics_lib::prelude::{AppPrefs, Coord, Rect, Shape, Timing, BLACK, WHITE};
+use pixels_graphics_lib::ui::{ElementState, UiElement};
+use pixels_graphics_lib::MouseData;
 
 pub struct Preview {
     bounds: Rect,
@@ -44,7 +44,8 @@ impl UiElement for Preview {
         graphics.clear_aware(BLACK);
 
         let mut image_buffer = vec![0; self.size.0 * self.size.1 * 4];
-        let mut image_graphics = Graphics::new(&mut image_buffer, self.size.0, self.size.1).expect("Creating preview buffer");
+        let mut image_graphics = Graphics::new(&mut image_buffer, self.size.0, self.size.1)
+            .expect("Creating preview buffer");
 
         for x in 0..self.size.0 {
             for y in 0..self.size.1 {

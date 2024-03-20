@@ -2,10 +2,10 @@ mod pad_scene;
 mod pad_view;
 mod preview;
 
+use crate::pad_scene::PadScene;
 use anyhow::Result;
 use pixels_graphics_lib::prelude::*;
 use serde::{Deserialize, Serialize};
-use crate::pad_scene::PadScene;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Settings {
@@ -20,7 +20,7 @@ fn settings() -> AppPrefs<Settings> {
         height: 5,
         dots: vec![false; 25],
     })
-        .expect("Unable to create prefs file")
+    .expect("Unable to create prefs file")
 }
 
 fn main() -> Result<()> {

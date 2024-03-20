@@ -1,9 +1,11 @@
-use std::ptr::swap_nonoverlapping;
-use pixels_graphics_lib::buffer_graphics_lib::Graphics;
-use pixels_graphics_lib::MouseData;
-use pixels_graphics_lib::prelude::{AppPrefs, BLACK, Coord, fill, LIGHT_GRAY, Rect, Shape, Timing, WHITE};
-use pixels_graphics_lib::ui::{ElementState, UiElement};
 use crate::Settings;
+use pixels_graphics_lib::buffer_graphics_lib::Graphics;
+use pixels_graphics_lib::prelude::{
+    fill, AppPrefs, Coord, Rect, Shape, Timing, BLACK, LIGHT_GRAY, WHITE,
+};
+use pixels_graphics_lib::ui::{ElementState, UiElement};
+use pixels_graphics_lib::MouseData;
+use std::ptr::swap_nonoverlapping;
 
 pub struct PadView {
     bounds: Rect,
@@ -46,11 +48,9 @@ impl PadView {
 
     pub fn on_mouse_update(&mut self, down_at: Coord) {
         if let Some(cell) = self.cell_for(down_at) {
-            if cell < self.dots.len() {
-                if self.last_cell_changed != cell {
-                    self.dots[cell] = !self.dots[cell];
-                    self.last_cell_changed = cell;
-                }
+            if cell < self.dots.len() && self.last_cell_changed != cell {
+                self.dots[cell] = !self.dots[cell];
+                self.last_cell_changed = cell;
             }
         }
     }
@@ -61,26 +61,31 @@ impl PadView {
         for value in &self.dots {
             output.push_str(if *value { "true" } else { "false" });
             output.push(',');
-            if i >= self.size.0  {
+            if i >= self.size.0 {
                 output.push('\n');
                 i = 0;
             }
-                i+=1;
+            i += 1;
         }
         output.trim().to_string()
     }
 
     pub fn paste_str(&mut self, value: &str) {
-        let parts :Vec<&str>= value.split(',').collect();
+        let parts: Vec<&str> = value.split(',').collect();
         if parts.len() != self.dots.len() {
-            eprintln!("Invalid length, expected {} found {}", self.dots.len(), parts.len());
+            eprintln!(
+                "Invalid length, expected {} found {}",
+                self.dots.len(),
+                parts.len()
+            );
             return;
         }
         if !parts.iter().all(|s| matches!(s.trim(), "true" | "false")) {
             eprintln!("Invalid string pasted must be ([true|false],){{16,576}}");
             return;
         }
-        parts.iter()
+        parts
+            .iter()
             .enumerate()
             .for_each(|(i, &value)| self.dots[i] = value.trim() == "true")
     }
@@ -107,7 +112,7 @@ impl PadView {
         for y in 0..height {
             for x in 0..half_width {
                 let target_right_i = (width - 1 - x) + y * width;
-                let target_left_i = x + y *width;
+                let target_left_i = x + y * width;
                 unsafe {
                     swap_nonoverlapping(&mut output[target_left_i], &mut output[target_right_i], 1);
                 }
@@ -151,7 +156,8 @@ impl PadView {
 
     fn drawing_area(&self) -> Rect {
         let square_size = self.square_size();
-        let drawing_area = Rect::new_with_size((0, 0), square_size * self.size.0, square_size * self.size.1);
+        let drawing_area =
+            Rect::new_with_size((0, 0), square_size * self.size.0, square_size * self.size.1);
         drawing_area.move_center_to(self.bounds.center())
     }
 }
@@ -177,17 +183,26 @@ impl UiElement for PadView {
             for y in 0..self.size.1 {
                 let i = x + y * self.size.0;
                 if self.dots[i] {
-                    let cell = Rect::new_with_size(area.top_left() + (x * size, y * size), size, size);
+                    let cell =
+                        Rect::new_with_size(area.top_left() + (x * size, y * size), size, size);
                     graphics.draw_rect(cell, fill(WHITE));
                 }
             }
         }
 
         for x in 0..=self.size.0 {
-            graphics.draw_line(area.top_left() + (x * size, 0), area.bottom_left() + (x * size, 0), LIGHT_GRAY);
+            graphics.draw_line(
+                area.top_left() + (x * size, 0),
+                area.bottom_left() + (x * size, 0),
+                LIGHT_GRAY,
+            );
         }
         for y in 0..=self.size.1 {
-            graphics.draw_line(area.top_left() + (0, y * size), area.top_right() + (0, y * size), LIGHT_GRAY);
+            graphics.draw_line(
+                area.top_left() + (0, y * size),
+                area.top_right() + (0, y * size),
+                LIGHT_GRAY,
+            );
         }
 
         graphics.clip_mut().set_all_valid();
