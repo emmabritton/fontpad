@@ -1,0 +1,16 @@
+[package]
+name = "fontpad"
+version = "0.1.0"
+edition = "2021"
+authors = ["Emma Britton <emmabritton@pm.me>"]
+description = "Pixel font tool for buffer graphics"
+license-file = "LICENSE"
+repository = "https://github.com/emmabritton/fontpad"
+readme = "README.md"
+publish = false
+
+[dependencies]
+pixels-graphics-lib = "0.16.0"
+anyhow = "1.0.81"
+copypasta = "0.10.1"
+serde = { version = "1.0.197", features = ["derive"] }
