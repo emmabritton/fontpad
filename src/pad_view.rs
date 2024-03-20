@@ -182,7 +182,7 @@ impl PadView {
     pub fn move_left(&mut self) {
         for i in 0..self.size.1 {
             let take = i * self.size.0;
-            let insert = take + (self.size.0 -1);
+            let insert = take + (self.size.0 - 1);
             let value = self.dots.remove(take);
             self.dots.insert(insert, value);
         }
@@ -191,7 +191,7 @@ impl PadView {
     pub fn move_right(&mut self) {
         for i in 0..self.size.1 {
             let insert = i * self.size.0;
-            let take = insert + (self.size.0 -1);
+            let take = insert + (self.size.0 - 1);
             let value = self.dots.remove(take);
             self.dots.insert(insert, value);
         }
