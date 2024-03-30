@@ -12,6 +12,7 @@ struct Settings {
     pub width: usize,
     pub height: usize,
     pub dots: Vec<bool>,
+    pub guides: Vec<bool>,
 }
 
 fn settings() -> AppPrefs<Settings> {
@@ -19,6 +20,7 @@ fn settings() -> AppPrefs<Settings> {
         width: 5,
         height: 5,
         dots: vec![false; 25],
+        guides: vec![false; 25],
     })
     .expect("Unable to create prefs file")
 }

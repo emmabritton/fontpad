@@ -3,14 +3,13 @@ use crate::preview::Preview;
 use crate::{settings, SceneName, SceneResult, Settings};
 use copypasta::{ClipboardContext, ClipboardProvider};
 use pixels_graphics_lib::prelude::SceneUpdateResult::Pop;
-use pixels_graphics_lib::prelude::TextSize::*;
 use pixels_graphics_lib::prelude::*;
 use pixels_graphics_lib::scenes::SceneUpdateResult::Nothing;
 use pixels_graphics_lib::ui::prelude::*;
 use pixels_graphics_lib::ui::styles::UiStyle;
 
-const WIDTH_POS: Coord = Coord::new(24, 90);
-const HEIGHT_POS: Coord = Coord::new(24, 124);
+const WIDTH_POS: Coord = Coord::new(24, 84);
+const HEIGHT_POS: Coord = Coord::new(24, 114);
 
 pub struct PadScene {
     bg_color: Color,
@@ -39,19 +38,27 @@ impl PadScene {
             result: Nothing,
             clipboard: ClipboardContext::new().expect("Unable to access clipboard"),
             infos: vec![
-                Text::new("W:", TextPos::px(coord!(4, 90)), (WHITE, Normal)),
-                Text::new("H:", TextPos::px(coord!(4, 124)), (WHITE, Normal)),
+                Text::new(
+                    "W:",
+                    TextPos::px(coord!(4, WIDTH_POS.y)),
+                    (WHITE, PixelFont::Standard6x7),
+                ),
+                Text::new(
+                    "H:",
+                    TextPos::px(coord!(4, HEIGHT_POS.y)),
+                    (WHITE, PixelFont::Standard6x7),
+                ),
             ],
-            preview: Preview::new(coord!(5, 164), &settings),
+            preview: Preview::new(coord!(2, 144), &settings),
             pad_view: PadView::new(coord!(60, 4), &settings),
             fill: Button::new(coord!(4, 4), "Fill", Some(50), &style.button),
             clear: Button::new(coord!(4, 24), "Clear", Some(50), &style.button),
             flip_h: Button::new(coord!(4, 44), "Flip H", Some(50), &style.button),
             flip_v: Button::new(coord!(4, 64), "Flip V", Some(50), &style.button),
-            font_width_inc: Button::new(coord!(30, 100), "+", Some(20), &style.button),
-            font_width_dec: Button::new(coord!(4, 100), "-", Some(20), &style.button),
-            font_height_inc: Button::new(coord!(30, 134), "+", Some(20), &style.button),
-            font_height_dec: Button::new(coord!(4, 134), "-", Some(20), &style.button),
+            font_width_inc: Button::new(coord!(30, 94), "+", Some(20), &style.button),
+            font_width_dec: Button::new(coord!(4, 94), "-", Some(20), &style.button),
+            font_height_inc: Button::new(coord!(30, 124), "+", Some(20), &style.button),
+            font_height_dec: Button::new(coord!(4, 124), "-", Some(20), &style.button),
             settings,
             next_update: Timer::new_once(0.2),
         })
@@ -67,7 +74,9 @@ impl PadScene {
         self.settings.data.dots = self.pad_view.dots.clone();
         self.settings.data.width = self.pad_view.size.0;
         self.settings.data.height = self.pad_view.size.1;
+        self.settings.data.guides = self.pad_view.guides.clone();
         self.settings.save();
+        self.preview.add_to_history();
     }
 
     fn paste(&mut self) {
@@ -99,12 +108,12 @@ impl Scene<SceneResult, SceneName> for PadScene {
         graphics.draw_text(
             &format!("{}", self.pad_view.size.0),
             TextPos::px(WIDTH_POS),
-            (WHITE, Normal),
+            (WHITE, PixelFont::Standard6x7),
         );
         graphics.draw_text(
             &format!("{}", self.pad_view.size.1),
             TextPos::px(HEIGHT_POS),
-            (WHITE, Normal),
+            (WHITE, PixelFont::Standard6x7),
         );
     }
 
@@ -150,9 +159,16 @@ impl Scene<SceneResult, SceneName> for PadScene {
         down_at: Coord,
         mouse: &MouseData,
         mouse_button: MouseButton,
-        _: &[KeyCode],
+        held: &[KeyCode],
     ) {
         if mouse_button == MouseButton::Left {
+            if self.clear.on_mouse_click(down_at, mouse.xy) {
+                if held.contains(&KeyCode::ShiftLeft) || held.contains(&KeyCode::ShiftRight) {
+                    self.pad_view.clear_guides();
+                } else {
+                    self.pad_view.clear();
+                }
+            }
             if self.font_height_inc.on_mouse_click(down_at, mouse.xy) {
                 self.pad_view.change_height(1);
             }
@@ -164,9 +180,6 @@ impl Scene<SceneResult, SceneName> for PadScene {
             }
             if self.font_width_dec.on_mouse_click(down_at, mouse.xy) {
                 self.pad_view.change_width(-1);
-            }
-            if self.clear.on_mouse_click(down_at, mouse.xy) {
-                self.pad_view.clear();
             }
             if self.fill.on_mouse_click(down_at, mouse.xy) {
                 self.pad_view.fill();
@@ -185,10 +198,13 @@ impl Scene<SceneResult, SceneName> for PadScene {
         &mut self,
         timing: &Timing,
         mouse: &MouseData,
-        _: &[KeyCode],
+        held: &[KeyCode],
     ) -> SceneUpdateResult<SceneResult, SceneName> {
         if mouse.is_down(MouseButton::Left).is_some() && self.next_update.update(timing) {
-            self.pad_view.on_mouse_update(mouse.xy);
+            self.pad_view.on_mouse_update(
+                mouse.xy,
+                held.contains(&KeyCode::ShiftLeft) || held.contains(&KeyCode::ShiftRight),
+            );
             self.preview.update(&self.pad_view);
             self.next_update.reset();
         }

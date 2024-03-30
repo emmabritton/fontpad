@@ -1,15 +1,23 @@
-use crate::Settings;
+use std::ptr::swap_nonoverlapping;
+
 use pixels_graphics_lib::buffer_graphics_lib::Graphics;
+use pixels_graphics_lib::MouseData;
 use pixels_graphics_lib::prelude::{
-    fill, AppPrefs, Coord, Rect, Shape, Timing, BLACK, LIGHT_GRAY, WHITE,
+    AppPrefs, BLACK, Color, Coord, DARK_GRAY, fill, MID_GRAY, Rect, Shape, Timing,
+    WHITE,
 };
 use pixels_graphics_lib::ui::{ElementState, UiElement};
-use pixels_graphics_lib::MouseData;
-use std::ptr::swap_nonoverlapping;
+
+use crate::Settings;
+
+const PX_COLOR: Color = WHITE;
+const GUIDE_COLOR: Color = MID_GRAY;
+const LINE_COLOR: Color = DARK_GRAY;
 
 pub struct PadView {
     bounds: Rect,
     pub dots: Vec<bool>,
+    pub guides: Vec<bool>,
     pub size: (usize, usize),
     last_cell_changed: usize,
 }
@@ -20,6 +28,7 @@ impl PadView {
             bounds: Rect::new_with_size(pos, 240, 240),
             size: (settings.data.width, settings.data.height),
             dots: settings.data.dots.clone(),
+            guides: settings.data.guides.clone(),
             last_cell_changed: usize::MAX,
         }
     }
@@ -27,28 +36,35 @@ impl PadView {
 
 impl PadView {
     pub fn change_width(&mut self, value: isize) {
-        if value < 0 && self.size.0 > 4 {
+        if value < 0 && self.size.0 > 1 {
             self.size.0 -= 1;
         }
-        if value > 0 && self.size.0 < 24 {
+        if value > 0 && self.size.0 < 16 {
             self.size.0 += 1;
         }
         self.dots = vec![false; self.size.0 * self.size.1];
+        self.guides = vec![false; self.size.0 * self.size.1];
     }
 
     pub fn change_height(&mut self, value: isize) {
-        if value < 0 && self.size.1 > 4 {
+        if value < 0 && self.size.1 > 1 {
             self.size.1 -= 1;
         }
-        if value > 0 && self.size.1 < 24 {
+        if value > 0 && self.size.1 < 16 {
             self.size.1 += 1;
         }
         self.dots = vec![false; self.size.0 * self.size.1];
+        self.guides = vec![false; self.size.0 * self.size.1];
     }
 
-    pub fn on_mouse_update(&mut self, down_at: Coord) {
+    pub fn on_mouse_update(&mut self, down_at: Coord, shift_down: bool) {
         if let Some(cell) = self.cell_for(down_at) {
-            if cell < self.dots.len() && self.last_cell_changed != cell {
+            if shift_down {
+                if cell < self.guides.len() && self.last_cell_changed != cell {
+                    self.guides[cell] = !self.guides[cell];
+                    self.last_cell_changed = cell;
+                }
+            } else if cell < self.dots.len() && self.last_cell_changed != cell {
                 self.dots[cell] = !self.dots[cell];
                 self.last_cell_changed = cell;
             }
@@ -92,6 +108,10 @@ impl PadView {
 
     pub fn clear(&mut self) {
         self.dots.fill(false);
+    }
+
+    pub fn clear_guides(&mut self) {
+        self.guides.fill(false);
     }
 
     pub fn fill(&mut self) {
@@ -218,10 +238,16 @@ impl UiElement for PadView {
         for x in 0..self.size.0 {
             for y in 0..self.size.1 {
                 let i = x + y * self.size.0;
+                let cell = Rect::new_with_size(area.top_left() + (x * size, y * size), size, size);
                 if self.dots[i] {
-                    let cell =
-                        Rect::new_with_size(area.top_left() + (x * size, y * size), size, size);
-                    graphics.draw_rect(cell, fill(WHITE));
+                    graphics.draw_rect(cell.clone(), fill(PX_COLOR));
+                }
+                if self.guides[i] {
+                    let guide_cell = Rect::new(
+                        cell.bottom_left() - (0., size as f32 * 0.2),
+                        cell.bottom_right(),
+                    );
+                    graphics.draw_rect(guide_cell, fill(GUIDE_COLOR));
                 }
             }
         }
@@ -230,14 +256,14 @@ impl UiElement for PadView {
             graphics.draw_line(
                 area.top_left() + (x * size, 0),
                 area.bottom_left() + (x * size, 0),
-                LIGHT_GRAY,
+                LINE_COLOR,
             );
         }
         for y in 0..=self.size.1 {
             graphics.draw_line(
                 area.top_left() + (0, y * size),
                 area.top_right() + (0, y * size),
-                LIGHT_GRAY,
+                LINE_COLOR,
             );
         }
 
