@@ -8,3 +8,5 @@ Used to generate true/false arrays for fonts in buffer-graphics-lib
 * `Left click` to toggle pixel
 * `Shift + Left click` to set guide pixel
 * Hold `shift` when clicking on clear to remove guide pixels
+
+![Screenshot](https://raw.githubusercontent.com/emmabritton/fontpad/main/.github/screenshot.png)
