@@ -1,9 +1,9 @@
 use pixels_graphics_lib::buffer_graphics_lib::Graphics;
-use pixels_graphics_lib::MouseData;
 use pixels_graphics_lib::prelude::{
-    AppPrefs, BLACK, Color, Coord, MID_GRAY, Rect, Scaling, Shape, Timing, WHITE,
+    AppPrefs, Color, Coord, Rect, Scaling, Shape, Timing, BLACK, MID_GRAY, WHITE,
 };
 use pixels_graphics_lib::ui::{ElementState, UiElement};
+use pixels_graphics_lib::MouseData;
 
 use crate::pad_view::PadView;
 use crate::Settings;

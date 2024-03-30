@@ -1,12 +1,11 @@
 use std::ptr::swap_nonoverlapping;
 
 use pixels_graphics_lib::buffer_graphics_lib::Graphics;
-use pixels_graphics_lib::MouseData;
 use pixels_graphics_lib::prelude::{
-    AppPrefs, BLACK, Color, Coord, DARK_GRAY, fill, MID_GRAY, Rect, Shape, Timing,
-    WHITE,
+    fill, AppPrefs, Color, Coord, Rect, Shape, Timing, BLACK, DARK_GRAY, MID_GRAY, WHITE,
 };
 use pixels_graphics_lib::ui::{ElementState, UiElement};
+use pixels_graphics_lib::MouseData;
 
 use crate::Settings;
 
