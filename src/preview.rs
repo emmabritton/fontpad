@@ -2,7 +2,7 @@ use pixels_graphics_lib::buffer_graphics_lib::Graphics;
 use pixels_graphics_lib::prelude::{
     AppPrefs, Color, Coord, Rect, Scaling, Shape, Timing, BLACK, MID_GRAY, WHITE,
 };
-use pixels_graphics_lib::ui::{ElementState, UiElement};
+use pixels_graphics_lib::ui::{ViewState, PixelView};
 use pixels_graphics_lib::MouseData;
 
 use crate::pad_view::PadView;
@@ -56,7 +56,7 @@ impl Preview {
     }
 }
 
-impl UiElement for Preview {
+impl PixelView for Preview {
     fn set_position(&mut self, top_left: Coord) {
         self.bounds = self.bounds.move_to(top_left);
     }
@@ -121,11 +121,11 @@ impl UiElement for Preview {
 
     fn update(&mut self, _: &Timing) {}
 
-    fn set_state(&mut self, _: ElementState) {
+    fn set_state(&mut self, _: ViewState) {
         unimplemented!()
     }
 
-    fn get_state(&self) -> ElementState {
-        ElementState::Normal
+    fn get_state(&self) -> ViewState {
+        ViewState::Normal
     }
 }
