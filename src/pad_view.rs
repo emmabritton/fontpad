@@ -4,8 +4,8 @@ use pixels_graphics_lib::buffer_graphics_lib::Graphics;
 use pixels_graphics_lib::prelude::{
     fill, AppPrefs, Color, Coord, Rect, Shape, Timing, BLACK, DARK_GRAY, MID_GRAY, WHITE,
 };
-use pixels_graphics_lib::MouseData;
 use pixels_graphics_lib::ui::{PixelView, ViewState};
+use pixels_graphics_lib::MouseData;
 
 use crate::Settings;
 

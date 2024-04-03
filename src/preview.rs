@@ -2,7 +2,7 @@ use pixels_graphics_lib::buffer_graphics_lib::Graphics;
 use pixels_graphics_lib::prelude::{
     AppPrefs, Color, Coord, Rect, Scaling, Shape, Timing, BLACK, MID_GRAY, WHITE,
 };
-use pixels_graphics_lib::ui::{ViewState, PixelView};
+use pixels_graphics_lib::ui::{PixelView, ViewState};
 use pixels_graphics_lib::MouseData;
 
 use crate::pad_view::PadView;
