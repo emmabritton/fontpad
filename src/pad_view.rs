@@ -13,6 +13,7 @@ const PX_COLOR: Color = WHITE;
 const GUIDE_COLOR: Color = MID_GRAY;
 const LINE_COLOR: Color = DARK_GRAY;
 
+#[derive(Debug)]
 pub struct PadView {
     bounds: Rect,
     pub dots: Vec<bool>,

@@ -92,7 +92,7 @@ impl PadScene {
 }
 
 impl Scene<SceneResult, SceneName> for PadScene {
-    fn render(&self, graphics: &mut Graphics, mouse: &MouseData, _: &[KeyCode]) {
+    fn render(&self, graphics: &mut Graphics, mouse: &MouseData, _: &FxHashSet<KeyCode>) {
         graphics.clear(self.bg_color);
         self.pad_view.render(graphics, mouse);
         self.preview.render(graphics, mouse);
@@ -117,7 +117,7 @@ impl Scene<SceneResult, SceneName> for PadScene {
         );
     }
 
-    fn on_key_up(&mut self, key: KeyCode, _: &MouseData, held: &[KeyCode]) {
+    fn on_key_up(&mut self, key: KeyCode, _: &MouseData, held: &FxHashSet<KeyCode>) {
         let modifier_pressed = held.contains(&KeyCode::ControlLeft)
             || held.contains(&KeyCode::ControlRight)
             || held.contains(&KeyCode::SuperLeft)
@@ -159,7 +159,7 @@ impl Scene<SceneResult, SceneName> for PadScene {
         down_at: Coord,
         mouse: &MouseData,
         mouse_button: MouseButton,
-        held: &[KeyCode],
+        held: &FxHashSet<KeyCode>,
     ) {
         if mouse_button == MouseButton::Left {
             if self.clear.on_mouse_click(down_at, mouse.xy) {
@@ -198,7 +198,7 @@ impl Scene<SceneResult, SceneName> for PadScene {
         &mut self,
         timing: &Timing,
         mouse: &MouseData,
-        held: &[KeyCode],
+        held: &FxHashSet<KeyCode>,
     ) -> SceneUpdateResult<SceneResult, SceneName> {
         if mouse.is_down(MouseButton::Left).is_some() && self.next_update.update(timing) {
             self.pad_view.on_mouse_update(

@@ -11,6 +11,7 @@ use crate::Settings;
 const PX_COLOR: Color = WHITE;
 const GUIDE_COLOR: Color = MID_GRAY.with_alpha(128);
 
+#[derive(Debug)]
 pub struct Preview {
     bounds: Rect,
     size: (usize, usize),
