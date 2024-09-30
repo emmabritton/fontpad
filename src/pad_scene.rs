@@ -199,6 +199,7 @@ impl Scene<SceneResult, SceneName> for PadScene {
         timing: &Timing,
         mouse: &MouseData,
         held: &FxHashSet<KeyCode>,
+        _: &Window
     ) -> SceneUpdateResult<SceneResult, SceneName> {
         if mouse.is_down(MouseButton::Left).is_some() && self.next_update.update(timing) {
             self.pad_view.on_mouse_update(

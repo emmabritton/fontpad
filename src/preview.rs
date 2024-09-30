@@ -71,8 +71,8 @@ impl PixelView for Preview {
 
         graphics.clear_aware(BLACK);
 
-        let mut image_buffer = vec![0; self.size.0 * self.size.1 * 4];
-        let mut image_graphics = Graphics::new(&mut image_buffer, self.size.0, self.size.1)
+        let mut image_buffer = Graphics::create_buffer_u8(self.size.0, self.size.1);
+        let mut image_graphics = Graphics::new_u8_rgba(&mut image_buffer, self.size.0, self.size.1)
             .expect("Creating preview buffer");
 
         for x in 0..self.size.0 {

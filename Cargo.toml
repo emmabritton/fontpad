@@ -1,6 +1,6 @@
 [package]
 name = "fontpad"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 authors = ["Emma Britton <emmabritton@pm.me>"]
 description = "Pixel font tool for buffer graphics"
@@ -10,7 +10,7 @@ readme = "README.md"
 publish = false
 
 [dependencies]
-pixels-graphics-lib = { version="0.19.0", default-features = false, features = ["scenes", "window_prefs"] }
-anyhow = "1.0.82"
+pixels-graphics-lib = { version="0.20.1", default-features = false, features = ["scenes", "window_prefs", "softbuffer"] }
+anyhow = "1.0.89"
 copypasta = "0.10.1"
-serde = { version = "1.0.198", features = ["derive"] }
+serde = { version = "1.0.210", features = ["derive"] }
